@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CodeStorm | CSE-JNU</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Reset & UI Variables */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --card: #16161f;
+            --border: #2a2a3a;
+            --accent: #7c6fff;
+            --accent-text: #a89fff;
+            --text-primary: #f0eeff;
+            --text-secondary: #8a8aaa;
+            --text-muted: #4a4a6a;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        /* Header - Modified for Three Dot Menu */
+        .site-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* Pushes menu to the right */
+            height: 55px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        /* Header Menu Styling */
+        .header-menu {
+            position: relative;
+        }
+
+        .menu-trigger {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 10px;
+            transition: 0.3s;
+        }
+
+        .menu-trigger:hover {
+            color: var(--accent);
+        }
+
+        /* Dropdown Content */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: var(--surface);
+            min-width: 180px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            max-height: 300px;
+            /* Limits height if you have many links */
+            overflow-y: auto;
+        }
+
+        .dropdown-content a {
+            color: var(--text-primary);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--card);
+            color: var(--accent);
+        }
+
+        .dropdown-content a i {
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        /* Show class for JS toggle */
+        .show {
+            display: block;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 3rem 1rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, #0e0e18 0%, var(--bg) 100%);
+        }
+
+        .main-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.2rem, 10vw, 3.5rem);
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: -1px;
+        }
+
+        .sub-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Search */
+        .controls {
+            max-width: 400px;
+            margin: 0 auto 20px;
+            padding: 0 1rem;
+        }
+
+        #searchInput {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        /* Grid */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+
+        /* Card Style */
+        .profile-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: 0.3s;
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .card-band {
+            height: 4px;
+            background: var(--accent);
+        }
+
+        .card-header {
+            padding: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #1e1e30;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1.2rem;
+            font-size: 0.85rem;
+            flex-grow: 1;
+        }
+
+        .info-item {
+            margin-bottom: 8px;
+            display: flex;
+        }
+
+        .label {
+            color: var(--text-muted);
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .val {
+            color: var(--text-secondary);
+            word-break: break-word;
+        }
+
+        /* Contact Row */
+        .contact-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .contact-btn {
+            flex: 1;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: #1e1e30;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .contact-btn:hover {
+            transform: translateY(-3px);
+            color: #fff;
+            background: var(--accent);
+        }
+
+        .site-footer {
+            text-align: center;
+            padding: 3rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="logo">Code<span>Storm</span></div>
+
+        <!-- Three Dot Menu -->
+        <div class="header-menu">
+            <div class="menu-trigger" onclick="toggleMenu()">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </div>
+            <div class="dropdown-content" id="dropdownMenu">
+                <a href="https://jn-u-cse-15th-batch-protfolio.vercel.app/" target="_blank"><i
+                        class="fa-solid fa-user-group"></i> 15 Batch</a>
+                <a href="https://jnu.ac.bd/department/portal/cse" target="_blank"><i
+                        class="fa-solid fa-circle-info"></i> About CSE-JNU</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 class="main-title">CodeStorm</h1>
+        <p class="sub-title">CSE-JNU Directory</p>
+    </section>
+
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search profiles by name..." onkeyup="filterCards()">
+    </div>
+
+    <main>
+        <div class="profiles-grid" id="profileContainer">
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/pXLr3dFq/download.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Abdul Ahad</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Vashantek Govt.
+                            College</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Kalshi Islamia High
+                            School</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Kalshi, Pallabi, Mirpur,
+                            Dhaka-1216</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801318610432" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:abdul.ahad.000.313@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/0abdulahad0" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/xqVcwGDh/download-(1).jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">M. Abdulla </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Govt BM College,
+                            Barishal</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Hemayet Uddin Institute
+                            of Science </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Pirojpur,Barishal</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">O+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801737751158" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1FxJn4VKPn/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/SxD0XWNK/download-(3).jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Md. Sharia Rahat Polok
+                        </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Govt. Tolaram
+                            College</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Rafiqul Islam School and
+                            College</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Fatullah, Narayanganj-S,
+                            Narayanganj</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801577619872" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:shariarahatpolok@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61577945811275" target="_blank"
+                            class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/SNx3Bnf1/IMG-0853-Abid-hasan.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Md.Abid Hasan</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Govt. Debendra College
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Manikganj Govt High
+                            School</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Null</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801880075724" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:abidhasansaad777@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1H4uguJpTr/?mibextid=wwXIfr" target="_blank"
+                            class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/zvDy8CxC/inbound2422912971484285074-Mahfuzur-Rahman-Howlader.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Mahafujur Rahaman</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Dhaka City
+                            College</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Bhedarganj Pilot Govt.
+                            High School and College, Shariatpur</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">15, Dinanath Sen Road,
+                            Gandaria, Dhaka-1204</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:hauledarhimu@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/18Mc3TAkKG/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/GpzqxC4v/Whats-App-Image-2026-04-30-at-11-22-04-AM.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Asifa Afroz</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Mirpur Cantonment Public
+                            School and College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Monipur Uchcha Vidyalaya
+                            and College </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Mirpur-1,Ansarcamp,Uttar
+                            Tolarbagh,Dhaka </span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">O+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801829670592" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:asifaafroz01@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/14a2NB5wCf4/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/pV9QS89V/download-(5).jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Riya Roy</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Aftab Uddin School and
+                            College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Aftab Uddin School and
+                            College </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span
+                            class="val">Sararchar,Bajitpur,Kishorganj </span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">O+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:riyaroy17272717@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="N/A" target="_blank" class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/t4L7YZqt/download.webp"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Md Ariful Islam</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Notre Dame College
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Shashidal Union High
+                            School</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span
+                            class="val">102/2,Arambagh,motijheel,Dhaka-1000</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801895252098" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/18gVCPewSe/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar">U</div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Ummey Salma Smrity </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Lions School and
+                            College, Saidpur</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Lions School and College,
+                            Saidpur</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Mirpur,Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B-</span></div>
+                    <div class="contact-row">
+                        <a href="tel:" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/18dWhCUEQD/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/15s9Mh7s/Whats-App-Image-2026-04-30-at-3-53-40-PM.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Anubrati Biswas</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Jashore Govt. MM
+                            college, Jashore </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Kushtia Govt. Girls' High
+                            School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val"></span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">AB+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:anubratibs@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1CqbMrea3g/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar">JS</div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Jihad Sarkar </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Kahaloo Government
+                            College, Bogra </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Biam Laboratory School
+                            And College </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Dupchanchia,Bogra</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801760759053" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:jihadsarker3243@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/jihad.sarker.245378" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/pX3qXCF7/IMG-5490-Tayef-Hasan-official.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Mahmudul Hasan Tayef</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">National College of
+                            Education </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Satirpara Kali Kumar
+                            Institution School and College</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Narsingdi sadar</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801316321901" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1CFanD8A31/?mibextid=wwXIfr" target="_blank"
+                            class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/t4SWDt3P/profile-Muktadir-Faiaz.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Muktadir Al Faiaz </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Notre Dame College
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Bogura Zilla school
+                        </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span
+                            class="val">Sutrapur,Dhaka-1204</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801872535150" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:muktadirfaiaz1000@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1CEoWQKpde/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/TPfFqxcm/download-(6).jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">MD Abdul Kadir (Kafi)</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Notre Dame College,
+                            Motijheel, Dhaka.</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Ideal School And College,
+                            Motijheel, Dhaka</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Kachua, Chandpur</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801823550328" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:kafi2960@gmail.com" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/abdul.kadir.kafi" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/pdmGBdFX/IMG-20260429-120326-Sabid-habib.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Md Sabid Mollah </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">St. Gregory High School
+                            and College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Dhaka Govt. Muslim High
+                            School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Sutrapur,Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">AB+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:sabid220011@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/181wZgdCty/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/Y00ZTx41/Whats-App-Image-2026-04-30-at-12-16-26-PM.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Md Emon</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Notre Dame
+                            College,Dhaka</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">kasba Poura Hugh School
+                        </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span
+                            class="val">Kasba,Brahmanbaria</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801863972149" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:ikramolemon0303@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/emon12413072" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/FKGr0D0L/download-(7).jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Md.Abdullah</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Bpatc school and
+                            College. Savar, Dhaka </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Savar Adarchandra
+                            Got.high School. Savar, Dhaka. </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Savar,Dhaka </span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801827348110" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:mdabdullah2m13@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=100049188756760" target="_blank"
+                            class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/XYPSWmKB/inbound5350722076963446933-Priyantika.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Priyantika Barua</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Govt. City College
+                            Chattogram </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Dr. Khastagir Govt.
+                            Girls' High School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Shonir
+                            Akhra,Kadamtali,Dhaka</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">AB+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:priyantika.pb@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1BEnnkoMSq/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/bwJQ0f0R/inbound4607923220109826688-nirjona-Roy.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Nirjona Roy Riya</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Motijheel Ideal College
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">St.Francis Xaviers's
+                            Girls School & College</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span
+                            class="val">Tatibazar,Dhaka-1100</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">AB+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1FmpgnSvAn/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/7P2LwDTh/20260401-194101-Mahedi-Hassan.jpg"
+                            alt="20260401-194101-Mahedi-Hassan" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">MD.Mahedi Hassan</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Shaheed Ramiz Uddin
+                            Cantonment College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Mawna High School </span>
+                    </div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val"> Sirajganj </span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">O+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801763664409" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:mahedihassan4406@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1Fr5Dy5Xmw/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/TPLzg2xr/20260420-095129-kowshik-saha-joy.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Kowshik Saha joy </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Dhaka city college
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Narayanganj high school
+                            and college </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Nondipara, Narayanganj
+                        </span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">O+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801968102426" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:joys9697@gmail.com" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1Dg66DiLio/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/wB8V49Lz/inbound7733714928337586272-Arpita-Raj-Bongshi.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Arpita RajBongshi Debi
+                        </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Govt.Debendra College
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Kaniz Fatema girl's
+                            school and College </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Hall</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801782909409" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:arpitarajbongshi96@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/18jCSVjgmF/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/xd5zGQPb/inbound8241026673652617344-Mehrin-Maliha.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Mehrin Maliha </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Birshrestha Noor
+                            Mohammad Public College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Rajanagar Syedpur Union
+                            High School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Munshiganj, Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">O+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801537587056" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:mehrinmaliha1712@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1CjdqeLmfM/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/JzPZwJsx/IMG-20260127-WA0033-1-Zhaheen-Ibne-Fakhrul-(1409).jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Zhaheen Ibne Fakhrul </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Dhaka City College
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">A. M. High School </span>
+                    </div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Hatiya, Noakhali </span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A-</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801310726356" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:zhaheen702377@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=100068890839054" target="_blank"
+                            class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/YqXCMxxg/IMG-20251228-215733-Kawsar-Ahmed-01.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Kawser Ahmed</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Government Bangla
+                            College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Nasirabad Govt. High
+                            School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Uttara, Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B-</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801792919753" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:thekawsarahmed@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1Aq57TLLDe/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/zXHcGzCk/inbound7783321349210278636-Tamim-Islam.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Tamim Islam</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Narail Govt. Victoria
+                            College</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">PilLohagara ot High
+                            School</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Lohagara Noarail</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801904846462" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:nababsheikh0192410000@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1DZ4Au8dbJ/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/4y9qqsBT/IMG-20260123-WA0026-Talha-Jubayer-Priom.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Talha Jubayer Priom </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Sreepur Govt Degree
+                            college , Sreepur, Magura </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Sreepur Govt MC Pilot
+                            high school </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Keraniganj, Dhaka
+                        </span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801884353709" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:talhajubayerpriom@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1bXhGSmQH8/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/GmhzsbYq/inbound2718957555482865692-Susmita-Paul.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Susmita Paul</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Lalmatia Govt. Mohila
+                            College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Dhanmondi Govt. Girls'
+                            High School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Dhanmondi,Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801709866313" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:susmitaa.p.6@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/18SMhS1gvy/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/j2k0j1V8/inbound4631903447861400029-Tinne-Borsha.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Tinne Akter Barsa </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Abdul Kadir Mollah City
+                            College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Shahid Asad Collegiate
+                            Girls High School and College </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Bangla Bazar</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801769457912" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:tinneborsha277@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1Jfe4FQMww/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="profile-card">
+      <div class="card-band"></div>
+      <div class="card-header">
+        <div class="avatar"><img src="https://i.postimg.cc/vBxWP6Bb/IMG-20260102-210411-Monzila-A.jpg" style="width:100%; height:100%; object-fit:cover;"></div> 
+        <div>
+          <div class="student-name" style="font-weight:700; font-size:1.1rem;">Monzila Aktare </div>
+          <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-item"><span class="label">College:</span><span class="val">Govt. Saroda Sundari Mohila College, Faridpur </span></div>
+        <div class="info-item"><span class="label">School:</span><span class="val">Shibrampur R. D. Academy </span></div>
+        <div class="info-item"><span class="label">Address:</span><span class="val">Shibrampur, Faridpur Sadar, Faridpur</span></div>
+        <div class="info-item"><span class="label">Blood:</span><span class="val" style="color:var(--danger); font-weight:bold;">A+</span></div>
+        <div class="contact-row">
+          <a href="tel:+8801925699150" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+          <a href="mailto:monzilaislam967@gmail.com" class="contact-btn"><i class="fa-solid fa-envelope"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=100083295840972" target="_blank" class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+      </div>
+    </div>  -->
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/vHCwjJ37/IMG-20260430-171432-Dil-Afroj.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Dil Afroj</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Chandpur Govt. Girls'
+                            College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">MJSG School & College
+                        </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span
+                            class="val">Chandpur,Chittagong</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801831789666" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:dil.afroj.cb2007@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1LpoE7g8Gt/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/Nj7WXT4J/fedfab38-6245-4fb4-aecd-835133fe07fb-Dip-Ghosh.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Dip Ghosh</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Sabujbagh Govt
+                            College</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Khilgaon Govt High
+                            School</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Khilgaon , Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">A+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801404740164" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:ghdip2005@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/gh.dip.ii" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar">MK</div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Monisha koyrala ghosh
+                        </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Narail government
+                            Victoria college </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Dulai High School</span>
+                    </div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Lokkhibazar,
+                            Dhaka</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801327233924" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:monishakoyralaghosh@gmail " class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1BQZvFVFcD/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/YjcCvg3w/IMG-6216-Sidratul-Muntaha.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">MD Sidratul Muntaha</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Shahid Bulbul Sorkari
+                            college, Pabna</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Radhanagar Majumdar
+                            Academy School and college</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Pabna Sadar,
+                            Pabna</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801765530164" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:muntahasidratul353@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1Ky6wG1mHf/?mibextid=wwXIfr" target="_blank"
+                            class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/5t5N66YJ/IMG-7265-Prianti-Biswas.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Prianti Biswas</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Viqarunnesa Noon School
+                            and College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Viqarunnesa Noon School
+                            and College </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Azimpur, Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801404665001" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:Priantibiswas49@gmail.com " class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1CvFsKsMiz/?mibextid=wwXIfr" target="_blank"
+                            class="contact-btn"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/fTjVV26v/inbound5172356386356844549-Zarrin-Sadaf.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Zarrin Sadaf Adiba</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Shaheed Police Smrity
+                            College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Shaheed Police Smrity
+                            College </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Mirpur-14 </span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801615743827" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:zarrinsadaf321@gmail.com " class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/1J28Gb98zQ/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/kgG77T9h/Whats-App-Image-2026-04-30-at-6-33-56-PM-Abu-Sayeed-Rayhan.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Abu Sayeed Rayhan</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Rangpur Govt.
+                            College,Rangpur</span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Sathibari M.L. High
+                            School,Mithapukur</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Nilphamari,
+                            Rangpur</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">AB+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801737389548" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:abusaidbenrayhan@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/abu.sayeed.rayhan.2025" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/vTK3f8gB/1759237512366-Rupanti-Mahamud.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Rupanti Mahamud </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Prafulla Chandra
+                            College,Bagerhat </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Bagerhat Govt. Girls'
+                            High School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Luxmibazar,Dhaka</span>
+                    </div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801334567065" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:rupantimahamud@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/rupanti.mahamud.1" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/HxR67s7G/inbound7670823543701461972-Humaira-Nusrat-Orpa.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Humaira Nusrat Orpa </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Gurudayal Govt College,
+                            Kishoreganj </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">SV Govt Girls High
+                            School, Kishoreganj </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Kishoreganj,
+                            Dhaka</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">O+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801627226969" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:orpahumaira791@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/18jgzRbFFz/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar">RH</div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Ratul Ahmed </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Govt Bangla Clg</span>
+                    </div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Adarshaw high
+                            school</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Mirpur 10</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801713921513" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:ratulahmed20066@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/ratul.ahmed.154249" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img
+                            src="https://i.postimg.cc/Qt3tNcfr/inbound7803940327506994028-argho-saha.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Argho Saha</div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Notre Dame College
+                        </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Government Science High
+                            School </span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">South
+                            Badda,Gulshan,Dhaka-1212</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801327298975" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:arghosaha2004@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/share/18dKd5CHUC/" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-band"></div>
+                <div class="card-header">
+                    <div class="avatar"><img src="https://i.postimg.cc/d0BMddqP/IMG-20250624-142610-Shams-Seam.jpg"
+                            style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div>
+                        <div class="student-name" style="font-weight:700; font-size:1.1rem;">Shams Seam </div>
+                        <div style="color:var(--accent-text); font-size:0.8rem;">CSE-16 & JnU-20</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item"><span class="label">College:</span><span class="val">Government Rajendra
+                            College </span></div>
+                    <div class="info-item"><span class="label">School:</span><span class="val">Faridpur Zilla
+                            School</span></div>
+                    <div class="info-item"><span class="label">Address:</span><span class="val">Mirpur</span></div>
+                    <div class="info-item"><span class="label">Blood:</span><span class="val"
+                            style="color:var(--danger); font-weight:bold;">B+</span></div>
+                    <div class="contact-row">
+                        <a href="tel:+8801331285788" class="contact-btn"><i class="fa-solid fa-phone"></i></a>
+                        <a href="mailto:shamsseam4@gmail.com" class="contact-btn"><i
+                                class="fa-solid fa-envelope"></i></a>
+                        <a href="https://www.facebook.com/shams.seam.2025" target="_blank" class="contact-btn"><i
+                                class="fa-brands fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">Created by Abdul Ahad</footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById("dropdownMenu").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.menu-trigger') && !event.target.matches('.fa-ellipsis-vertical')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function filterCards() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.getElementsByClassName('profile-card');
+            for (let i = 0; i < cards.length; i++) {
+                const name = cards[i].querySelector('.student-name').innerText.toLowerCase();
+                cards[i].style.display = name.includes(input) ? "" : "none";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
